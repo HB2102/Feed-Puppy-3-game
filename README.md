@@ -1,8 +1,8 @@
-# Feed Puppy 2
+# Feed Puppy 3 (Shooting)
 
 ## (A simple game using pygame)
 
-Here is a simple feed puppy game using python pygame.  
+Here is a simple sooting game with feed puppy style using python pygame.  
 To use it and test it follow these instructions:
 <br><br>
 
@@ -13,7 +13,7 @@ you want by running the
 command :
 
 ```commandline
-git clone https://github.com/HB2102/Feed-Puppy-2-Game
+git clone https://github.com/HB2102/Feed-Puppy-3-Game
 ```
 
 ### 2. Install requirements
@@ -33,8 +33,8 @@ For running the project, simply run the "main.py" file and enjoy the game.
 
 ### 4. Use Project
 
-In this game you have to feed puppy the red food by moving it and if you hit any blue food one of your lives will be lost. You have 5 lives by
-default in the begging of each game and each time you feed the puppy one of the blue foods will be removed from the screen. If there will be no food on the screen, you win. Enjoy the game.
+In this game you should shoot bones by pressing the space key hand hit the foods. if you hit, you gain 1 point and the food will be removed form
+the screen and if you miss you lose one of your lives. Enjoy the game.
 
 <br><br><br>
 Thanks for your time.
