@@ -14,7 +14,8 @@ player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
 
 class Game():
-    def __init__(self, puppy_group, food_group):
+    def __init__(self, puppy_group, food_group, bone_group):
+        self.bone_group = bone_group
         self.puppy_group = puppy_group
         self.food_group = food_group
         self.score = 0
@@ -26,8 +27,8 @@ class Game():
         self.blue_food = pygame.image.load('images/food2.png')
         self.red_food = pygame.image.load('images/food.png')
 
-        self.food_group.add(Food((random.randint(0, 800)), (random.randint(100, 200)), self.red_food, 1))
-        for i in range(7):
+        # self.food_group.add(Food((random.randint(0, 800)), (random.randint(100, 200)), self.red_food, 1))
+        for i in range(8):
             self.food_group.add(Food(i * 100, 200, self.blue_food, 0))
 
         self.score_sound = pygame.mixer.Sound('sounds/dog.mp3')
@@ -79,7 +80,7 @@ class Game():
         screen.blit(score_text, score_rect)
         screen.blit(lives_text, lives_rect)
 
-        if self.score == 7:
+        if self.score == 8:
             screen.blit(win_text, win_rect)
             screen.blit(restart_text, restart_rect)
             self.game_over()
@@ -98,8 +99,8 @@ class Game():
             self.score = 0
             self.lives = 5
 
-            self.food_group.add(Food((random.randint(0, 800)), (random.randint(100, 200)), self.red_food, 1))
-            for i in range(7):
+            # self.food_group.add(Food((random.randint(0, 800)), (random.randint(100, 200)), self.red_food, 1))
+            for i in range(8):
                 self.food_group.add(Food(i * 100, 200, self.blue_food, 0))
 
     def pause_game(self):
@@ -116,28 +117,33 @@ class Game():
                     pygame.quit()
 
     def check_collisions(self):
-        caught_food = pygame.sprite.spritecollideany(self.puppy_group, self.food_group)
-        if caught_food:
-            if caught_food.food_type == 0:
-                self.lives -= 1
-                self.puppy_group.reset()
-                self.die_sound.play()
+        if pygame.sprite.groupcollide(self.food_group, self.bone_group, True, True):
+            self.score += 1
+            self.score_sound.play()
 
-                if self.lives == 0:
-                    self.game_over_sound.play()
-            else:
-                self.score_sound.play()
-                caught_food.remove(self.food_group)
-                self.score += 1
 
-                if len(self.food_group) > 0:
-                    random.choice(self.food_group.sprites()).kill()
-                    if len(self.food_group) >= 1:
-                        self.food_group.add(Food((random.randint(0, 800)), (random.randint(100, 200)), self.red_food, 1))
-
-                    else:
-                        self.puppy_group.reset()
-                        self.game_over_sound.play()
+        # caught_food = pygame.sprite.spritecollideany(self.puppy_group, self.food_group)
+        # if caught_food:
+        #     if caught_food.food_type == 0:
+        #         self.lives -= 1
+        #         self.puppy_group.reset()
+        #         self.die_sound.play()
+        #
+        #         if self.lives == 0:
+        #             self.game_over_sound.play()
+        #     else:
+        #         self.score_sound.play()
+        #         caught_food.remove(self.food_group)
+        #         self.score += 1
+        #
+        #         if len(self.food_group) > 0:
+        #             random.choice(self.food_group.sprites()).kill()
+        #             if len(self.food_group) >= 1:
+        #                 self.food_group.add(Food((random.randint(0, 800)), (random.randint(100, 200)), self.red_food, 1))
+        #
+        #             else:
+        #                 self.puppy_group.reset()
+        #                 self.game_over_sound.play()
 
 
 
@@ -193,6 +199,11 @@ class Bone(pygame.sprite.Sprite):
     def update(self):
         self.rect.y -= self.velocity
 
+        if self.rect.top < 100:
+            self.kill()
+            game.lives -= 1
+            game.die_sound.play()
+
 
 
 class Food(pygame.sprite.Sprite):
@@ -231,16 +242,17 @@ puppy_group = pygame.sprite.Group()
 puppy = Puppy(200, 500, bone_group)
 puppy_group.add(puppy)
 
-game = Game(puppy, food_group)
+game = Game(puppy, food_group, bone_group)
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                puppy.fire()
+        if game.lives > 0 :
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    puppy.fire()
 
     # screen color
     screen.fill('silver')
